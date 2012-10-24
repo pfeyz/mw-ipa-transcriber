@@ -14,7 +14,7 @@ class WordNotFoundError(KeyError):
         self.alternatives = alternatives
 
 API_KEY = ""
-IPA_URL = "http://www.dictionaryapi.com/api/v1/references/learners/xml/{{word}}?key={0}".format(API_KEY)
+IPA_URL="http://www.dictionaryapi.com/api/v1/references/collegiate/xml/{{word}}?key={0}".format(API_KEY)
 
 def get_ipa(word):
     response = urlopen(IPA_URL.format(word=urlquote(word)))
