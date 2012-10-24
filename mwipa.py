@@ -17,7 +17,7 @@ class WordNotFoundError(KeyError):
 RESOURCE = "learners"
 KEYS = {"learners": "",
         "collegiate": ""}
-IPA_URL="http://www.dictionaryapi.com/api/v1/references/{0}/xml/{{word}}?key={1}".format(RESOURCE, KEYS[RESOURCE])
+MW_URL="http://www.dictionaryapi.com/api/v1/references/{0}/xml/{{word}}?key={1}".format(RESOURCE, KEYS[RESOURCE])
 
 def format_unknown(word):
     " Formats `word` to indicate that word has not been translated. "
@@ -45,6 +45,11 @@ def get_mw_nodes(root, tag, word):
     return [pr for e in entries
             for pr in e.findall(tag) if pr is not None]
 
+def query_mw(word):
+    response = urlopen(MW_URL.format(word=urlquote(word)))
+    text = response.read()
+    xml = ElementTree.fromstring(text)
+    return xml
 def get_ipa(word, cache={}):
     """ Queries Merriam Webster for `word`. Caches results.
 
@@ -57,9 +62,7 @@ def get_ipa(word, cache={}):
 
     if word in cache:
         return cache[word]
-    response = urlopen(IPA_URL.format(word=urlquote(word)))
-    text = response.read()
-    xml = ElementTree.fromstring(text)
+    xml = query_mw(word)
     ipas = get_mw_nodes(xml, "pr", word)
     if ipas == []:
         alternatives = xml.findall("suggestion")
