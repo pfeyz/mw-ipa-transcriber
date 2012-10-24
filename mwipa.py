@@ -52,6 +52,15 @@ def query_mw(word):
     return xml
 
 def get_pos(word, cache={}):
+    """ Queries Merriam Webster POS listings for `word`.
+
+    Returns a list of POS entries. Throws WordNotFoundError if no POS are found,
+    possibly with a list of similar words MW suggested.
+
+    Results are cached.
+
+    """
+
     if word in cache:
         return cache[word]
     xml = query_mw(word)
@@ -64,10 +73,10 @@ def get_pos(word, cache={}):
     return pos_text
 
 def get_ipa(word, cache={}):
-    """ Queries Merriam Webster for `word`. Caches results.
+    """ Gets Merriam Webster IPA translation for `word`.
 
-    Returns a list of IPA translations. Throws WorNotFoundError if no
-    translations are found, possibly with a list of similar words MW suggested.
+    Returns a list of POS. Throws WordNotFoundError if no translations are
+    found, possibly with a list of similar words MW suggested.
 
     Results are cached.
 
@@ -118,9 +127,7 @@ def main(args):
             print "{0}/{1}".format(num + 1, length)
             if random.random() > 0.8:
                 time.sleep(2)
-            x = translate_line(line, translator)
-            transcribed = " ".join(x)
-            print transcribed
+            transcribed = " ".join(translate_line(line, translator))
             outfh.write(u"{0}\t{1}{2}".format(line, transcribed, os.linesep))
 
 if __name__ == "__main__":
