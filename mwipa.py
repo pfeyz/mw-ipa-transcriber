@@ -39,7 +39,7 @@ if __name__ == "__main__":
             length = len(lines)
             for num, line in enumerate(lines):
                 print "{0}/{1}".format(num + 1, length)
-                if random.random() > 0.7:
+                if random.random() > 0.8:
                     time.sleep(2)
                 for word in [w.strip() for w in line.split(" ")]:
                     try:
