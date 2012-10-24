@@ -122,22 +122,25 @@ def line_to_ipa(line):
             transcribed.append(format_unknown(word))
     return transcribed
 
+def main(infile, outfile):
+    with open(infile, "r") as infh, \
+            codecs.open(outfile, "w", 'utf-8') as outfh:
+        lines = infh.readlines()
+        length = len(lines)
+        for num, line in enumerate(lines):
+            line = line.strip()
+            print "{0}/{1}".format(num + 1, length)
+            if random.random() > 0.8:
+                time.sleep(2)
+            x = line_to_pos(line)
+            transcribed = " ".join(x)
+            print transcribed
+            outfh.write(u"{0}\t{1}{2}".format(line, transcribed, os.linesep))
+
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print "  You must provide input and output filenames"
         print "  Usage: mwipa infile.txt outfile.txt"
     else:
         infile, outfile = sys.argv[1:3]
-        with open(infile, "r") as infh, \
-                codecs.open(outfile, "w", 'utf-8') as outfh:
-            lines = infh.readlines()
-            length = len(lines)
-            for num, line in enumerate(lines):
-                line = line.strip()
-                print "{0}/{1}".format(num + 1, length)
-                if random.random() > 0.8:
-                    time.sleep(2)
-                x = line_to_pos(line)
-                transcribed = " ".join(x)
-                print transcribed
-                outfh.write(u"{0}\t{1}{2}".format(line, transcribed, os.linesep))
+        main(infile, outfile)
