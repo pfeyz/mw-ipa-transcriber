@@ -1,6 +1,6 @@
+import argparse
 import codecs
 import os
-import sys
 import random
 import re
 import time
@@ -102,9 +102,13 @@ def translate_line(line, translator):
             translated.append(ts[0])
     return translated
 
-def main(infile, outfile):
-    with open(infile, "r") as infh, \
-            codecs.open(outfile, "w", 'utf-8') as outfh:
+def main(args):
+    with open(args.infile, "r") as infh, \
+            codecs.open(args.outfile, "w", 'utf-8') as outfh:
+        if args.ipa:
+            translator = get_ipa
+        else:
+            translator = get_pos
         lines = infh.readlines()
         length = len(lines)
         for num, line in enumerate(lines):
@@ -112,15 +116,21 @@ def main(infile, outfile):
             print "{0}/{1}".format(num + 1, length)
             if random.random() > 0.8:
                 time.sleep(2)
-            x = translate_line(line, get_pos)
+            x = translate_line(line, translator)
             transcribed = " ".join(x)
             print transcribed
             outfh.write(u"{0}\t{1}{2}".format(line, transcribed, os.linesep))
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print "  You must provide input and output filenames"
-        print "  Usage: mwipa infile.txt outfile.txt"
-    else:
-        infile, outfile = sys.argv[1:3]
-        main(infile, outfile)
+    parser = argparse.ArgumentParser(description="Query merriam-webster.com")
+    parser.add_argument('infile',
+                        help='Text file without punctuation to use as input')
+    parser.add_argument('outfile',
+                        help='Output file to write tab-seperated data to')
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument('-i', '--ipa', action='store_true',
+                        help="Retrive IPA translations")
+    action.add_argument('-p', '--pos', action='store_true',
+                        help="Retrieve POS information")
+    args = parser.parse_args()
+    main(args)
