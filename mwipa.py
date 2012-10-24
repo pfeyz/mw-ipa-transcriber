@@ -19,6 +19,17 @@ KEYS = {"learners": "",
         "collegiate": ""}
 IPA_URL="http://www.dictionaryapi.com/api/v1/references/{0}/xml/{{word}}?key={1}".format(RESOURCE, KEYS[RESOURCE])
 
+def get_mw_nodes(root, tag, word):
+    """ Returns `tag` sub-nodes found for all entry nodes that match `word`
+    exactly in `root`.
+
+    """
+
+    # tag id is either "word" or "word[#]" where # is an actual number
+    entries = [e for e in root.findall("entry")
+               if re.match(r"^{0}(\[\d+\])?$".format(word), e.get('id'))]
+    return [pr for e in entries
+            for pr in e.findall(tag) if pr is not None]
 
 def get_ipa(word, cache={}):
     """ Queries Merriam Webster for `word`. Caches results.
@@ -35,26 +46,17 @@ def get_ipa(word, cache={}):
     response = urlopen(IPA_URL.format(word=urlquote(word)))
     text = response.read()
     xml = ElementTree.fromstring(text)
-    entries = [e for e in xml.findall("entry")
-               if re.match(r"^{0}(\[\d+\])?$".format(word), e.get('id'))]
-    ipas = []
-    for e in entries:
-        pr = e.findall("pr")
-        if pr:
-            ipas.extend(pr)
+    ipas = get_mw_nodes(xml, "pr", word)
+    if ipas == []:
+        alternatives = xml.findall("suggestion")
+        raise WordNotFoundError(alternatives=[s.text for s in alternatives])
     translations = []
     for ipa in ipas:
-        if ipa is not None:
-            if ipa.text:
-                translations.extend(ipa.text.split(','))
-            for i in list(ipa):
-                if i.tail:
-                    translations.extend([i.tail.strip(',; ')])
-        else:
-            alternatives = xml.findall("suggestion")
-            raise WordNotFoundError(alternatives=[s.text for s in alternatives])
-    if translations == []:
-        raise WordNotFoundError()
+        if ipa.text:
+            translations.extend(ipa.text.split(','))
+        for i in list(ipa):
+            if i.tail:
+                translations.extend([i.tail.strip(',; ')])
     cache[word] = translations
     return translations
 
