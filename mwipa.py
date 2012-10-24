@@ -48,7 +48,6 @@ def get_ipa(word):
 
 def line_to_ipa(line):
     transcribed = []
-    line = line.strip()
     for word in line.split(" "):
         try:
             ipas = get_ipa(word)
@@ -71,8 +70,9 @@ if __name__ == "__main__":
             lines = infh.readlines()
             length = len(lines)
             for num, line in enumerate(lines):
+                line = line.strip()
                 print "{0}/{1}".format(num + 1, length)
                 if random.random() > 0.8:
                     time.sleep(2)
                 transcribed = " ".join(line_to_ipa(line))
-                outfh.write(u"{0}{1}".format(transcribed, os.linesep))
+                outfh.write(u"{0}\t{1}{2}".format(line, transcribed, os.linesep))
