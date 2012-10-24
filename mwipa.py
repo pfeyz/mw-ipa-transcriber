@@ -1,6 +1,8 @@
 import codecs
 import os
 import sys
+import random
+import time
 import xml.etree.cElementTree as ElementTree
 from urllib import quote as urlquote
 from urllib2 import urlopen
@@ -33,7 +35,12 @@ if __name__ == "__main__":
         infile, outfile = sys.argv[1:3]
         with open(infile, "r") as infh, \
                 codecs.open(outfile, "w", 'utf-8') as outfh:
-            for line in infh.readlines():
+            lines = infh.readlines()
+            length = len(lines)
+            for num, line in enumerate(lines):
+                print "{0}/{1}".format(num + 1, length)
+                if random.random() > 0.7:
+                    time.sleep(2)
                 for word in [w.strip() for w in line.split(" ")]:
                     try:
                         outfh.write(u"{0}, {1}{2}".format(word, get_ipa(word),
