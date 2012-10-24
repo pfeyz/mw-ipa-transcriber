@@ -88,39 +88,19 @@ def get_ipa(word, cache={}):
     cache[word] = translations
     return translations
 
-def line_to_pos(line):
-    pos_line = []
+def translate_line(line, translator):
+    translated = []
     for word in line.split(" "):
         try:
-            pos = get_pos(word)
+            ts = translator(word)
         except WordNotFoundError:
-            pos_line.append(format_unknown(word))
+            translated.append(format_unknown(word))
             continue
-        if len(pos) > 1:
-            pos_line.append(format_alternatives(pos))
+        if len(ts) > 1:
+            translated.append(format_alternatives(ts))
         else:
-            pos_line.append(pos[0])
-    return pos_line
-
-def line_to_ipa(line):
-    """ Returns `line` converted to IPA.
-
-    If no IPA translation is found for a word, it's indicated like <<this>>. If
-    multiple translations are found, they're [ listed | like | this ] .
-
-    """
-
-    transcribed = []
-    for word in line.split(" "):
-        try:
-            ipas = get_ipa(word)
-            if len(ipas) > 1:
-                transcribed.append(format_alternatives(ipas))
-            else:
-                transcribed.append(ipas[0])
-        except WordNotFoundError:
-            transcribed.append(format_unknown(word))
-    return transcribed
+            translated.append(ts[0])
+    return translated
 
 def main(infile, outfile):
     with open(infile, "r") as infh, \
@@ -132,7 +112,7 @@ def main(infile, outfile):
             print "{0}/{1}".format(num + 1, length)
             if random.random() > 0.8:
                 time.sleep(2)
-            x = line_to_pos(line)
+            x = translate_line(line, get_pos)
             transcribed = " ".join(x)
             print transcribed
             outfh.write(u"{0}\t{1}{2}".format(line, transcribed, os.linesep))
