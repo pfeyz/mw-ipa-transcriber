@@ -20,7 +20,9 @@ KEYS = {"learners": "",
 IPA_URL="http://www.dictionaryapi.com/api/v1/references/{0}/xml/{{word}}?key={1}".format(RESOURCE, KEYS[RESOURCE])
 
 
-def get_ipa(word):
+def get_ipa(word, cache={}):
+    if word in cache:
+        return cache[word]
     response = urlopen(IPA_URL.format(word=urlquote(word)))
     text = response.read()
     xml = ElementTree.fromstring(text)
@@ -44,6 +46,7 @@ def get_ipa(word):
             raise WordNotFoundError(alternatives=[s.text for s in alternatives])
     if translations == []:
         raise WordNotFoundError()
+    cache[word] = translations
     return translations
 
 def line_to_ipa(line):
