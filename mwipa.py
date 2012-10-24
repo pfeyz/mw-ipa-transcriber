@@ -59,7 +59,9 @@ def get_pos(word, cache={}):
     if pos == []:
         alternatives = xml.findall("suggestion")
         raise WordNotFoundError(alternatives=[s.text for s in alternatives])
-    return [p.text for p in pos]
+    pos_text = [p.text for p in pos]
+    cache[word] = pos_text
+    return pos_text
 
 def get_ipa(word, cache={}):
     """ Queries Merriam Webster for `word`. Caches results.
