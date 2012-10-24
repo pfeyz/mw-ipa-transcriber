@@ -21,6 +21,15 @@ IPA_URL="http://www.dictionaryapi.com/api/v1/references/{0}/xml/{{word}}?key={1}
 
 
 def get_ipa(word, cache={}):
+    """ Queries Merriam Webster for `word`. Caches results.
+
+    Returns a list of IPA translations. Throws WorNotFoundError if no
+    translations are found, possibly with a list of similar words MW suggested.
+
+    Results are cached.
+
+    """
+
     if word in cache:
         return cache[word]
     response = urlopen(IPA_URL.format(word=urlquote(word)))
@@ -50,6 +59,13 @@ def get_ipa(word, cache={}):
     return translations
 
 def line_to_ipa(line):
+    """ Returns `line` converted to IPA.
+
+    If no IPA translation is found for a word, it's indicated like <<this>>. If
+    multiple translations are found, they're [ listed | like | this ] .
+
+    """
+
     transcribed = []
     for word in line.split(" "):
         try:
