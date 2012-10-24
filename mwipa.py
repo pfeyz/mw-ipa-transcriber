@@ -19,6 +19,20 @@ KEYS = {"learners": "",
         "collegiate": ""}
 IPA_URL="http://www.dictionaryapi.com/api/v1/references/{0}/xml/{{word}}?key={1}".format(RESOURCE, KEYS[RESOURCE])
 
+def format_unknown(word):
+    " Formats `word` to indicate that word has not been translated. "
+    return u"<<%s>>" % word
+
+def format_alternatives(ipas):
+    """ Returns a string joining the strings in `ipas`, indicating that they are
+    multiple alternative translations.
+
+    """
+
+    alts = u" | ".join(ipas)
+    alts = u"[ {0} ]".format(alts)
+    return alts
+
 def get_mw_nodes(root, tag, word):
     """ Returns `tag` sub-nodes found for all entry nodes that match `word`
     exactly in `root`.
@@ -72,12 +86,12 @@ def line_to_ipa(line):
     for word in line.split(" "):
         try:
             ipas = get_ipa(word)
-            entry = u" | ".join(ipas)
             if len(ipas) > 1:
-                entry = u"[ {0} ]".format(entry)
-            transcribed.append(entry)
+                transcribed.append(format_alternatives(ipas))
+            else:
+                transcribed.append(ipas[0])
         except WordNotFoundError:
-            transcribed.append(u"<<%s>>" % word)
+            transcribed.append(format_unknown(word))
     return transcribed
 
 if __name__ == "__main__":
