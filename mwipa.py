@@ -46,8 +46,8 @@ if __name__ == "__main__":
                         outfh.write(u"{0}, {1}{2}".format(word, get_ipa(word),
                                                           os.linesep))
                     except WordNotFoundError, e:
-                        out = u"{0}, {1}".format(
-                            word, u"No results for {0}, {1}{2}".format(
+                        outfh.write(u"{0}, {1}".format(
+                            word, u"No results for {0}. Maybe try {1}{2}".format(
                                 word,
                                 ", ".join(e.alternatives),
-                                os.linesep))
+                                os.linesep)))
