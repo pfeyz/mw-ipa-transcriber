@@ -1,9 +1,7 @@
 import argparse
 import codecs
 import os
-import random
 import re
-import time
 import xml.etree.cElementTree as ElementTree
 from urllib import quote as urlquote
 from urllib2 import urlopen
@@ -114,6 +112,8 @@ def translate_line(line, translator):
     return translated
 
 def main(args):
+    if not KEYS[RESOURCE]:
+        raise Exception("No API Keys supplied")
     with open(args.infile, "r") as infh, \
             codecs.open(args.outfile, "w", 'utf-8') as outfh:
         if args.ipa:
@@ -125,8 +125,6 @@ def main(args):
         for num, line in enumerate(lines):
             line = line.strip()
             print "{0}/{1}".format(num + 1, length)
-            if random.random() > 0.8:
-                time.sleep(2)
             transcribed = " ".join(translate_line(line, translator))
             outfh.write(u"{0}\t{1}{2}".format(line, transcribed, os.linesep))
 
