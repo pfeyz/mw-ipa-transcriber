@@ -13,8 +13,10 @@ class WordNotFoundError(KeyError):
         KeyError.__init__(self, *args, **kwargs)
         self.alternatives = alternatives
 
-API_KEY = ""
-IPA_URL="http://www.dictionaryapi.com/api/v1/references/collegiate/xml/{{word}}?key={0}".format(API_KEY)
+RESOURCE = "learners"
+KEYS = {"learners": "",
+        "collegiate": ""}
+IPA_URL="http://www.dictionaryapi.com/api/v1/references/{0}/xml/{{word}}?key={1}".format(RESOURCE, KEYS[RESOURCE])
 
 def get_ipa(word):
     response = urlopen(IPA_URL.format(word=urlquote(word)))
