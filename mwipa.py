@@ -50,6 +50,17 @@ def query_mw(word):
     text = response.read()
     xml = ElementTree.fromstring(text)
     return xml
+
+def get_pos(word, cache={}):
+    if word in cache:
+        return cache[word]
+    xml = query_mw(word)
+    pos = get_mw_nodes(xml, "fl", word)
+    if pos == []:
+        alternatives = xml.findall("suggestion")
+        raise WordNotFoundError(alternatives=[s.text for s in alternatives])
+    return [p.text for p in pos]
+
 def get_ipa(word, cache={}):
     """ Queries Merriam Webster for `word`. Caches results.
 
@@ -76,6 +87,20 @@ def get_ipa(word, cache={}):
                 translations.extend([i.tail.strip(',; ')])
     cache[word] = translations
     return translations
+
+def line_to_pos(line):
+    pos_line = []
+    for word in line.split(" "):
+        try:
+            pos = get_pos(word)
+        except WordNotFoundError:
+            pos_line.append(format_unknown(word))
+            continue
+        if len(pos) > 1:
+            pos_line.append(format_alternatives(pos))
+        else:
+            pos_line.append(pos[0])
+    return pos_line
 
 def line_to_ipa(line):
     """ Returns `line` converted to IPA.
@@ -112,5 +137,7 @@ if __name__ == "__main__":
                 print "{0}/{1}".format(num + 1, length)
                 if random.random() > 0.8:
                     time.sleep(2)
-                transcribed = " ".join(line_to_ipa(line))
+                x = line_to_pos(line)
+                transcribed = " ".join(x)
+                print transcribed
                 outfh.write(u"{0}\t{1}{2}".format(line, transcribed, os.linesep))
