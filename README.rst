@@ -5,7 +5,7 @@ transcriptions. Also includes part-of-speech functionality. To use it you'll
 need to get API keys from `Merriam-Webster's Developer Center`_ and populate the
 KEYS dictionary with them. The script is written to work with the collegiate and
 learner's dictionary, but you should know that it looks like the collegiate
-dictionary uses it's own non-ipa_ pronunciation notation.
+dictionary uses its own non-ipa_ pronunciation notation.
 
 Use of the Merriam Webster Dictionary API is subject to their `terms of
 service`_.
@@ -30,7 +30,7 @@ The script can also be used as a command line program for batch transcription.
   $ python mwipa.py -h
   usage: mwipa.py [-h] (-i | -p) infile outfile
 
-  Query merriam-webster.com
+  Query merriam-webster.com for IPA or POS data
 
   positional arguments:
     infile      Text file without punctuation to use as input
@@ -49,8 +49,11 @@ For example,
   1/2
   2/2
 
-Will result in the following "out.csv" given this "in.txt". Words unable to be
-transcribed are indicated like <<this>> and words with alternative transcriptions are [ listed | like | this ] .
+will result in the following "out.csv" given this "in.txt". Words unable to be
+transcribed are indicated like <<this>> and words with alternative
+transcriptions are [ listed | like | this ] . (Example text excerpts taken from
+Wikipedia's `list of common misconceptions`_ which is a great read if you're
+into correcting people constantly.)
 
 ::
 
@@ -65,3 +68,5 @@ transcribed are indicated like <<this>> and words with alternative transcription
   this misconception was popularized by the Disney film White wilderness	[ ˈðɪs | ðəs | ˈðɪs ] ˌmɪskənˈsɛpʃən <<was>> <<popularized>> [ ˈbaɪ | bə | ˈbaɪ ] [ ðə | ði | ˈði: ] <<Disney>> ˈfɪlm <<White>> ˈwɪldɚnəs
 
 As you can see, inflected forms aren't currently recognized.
+
+.. _`list of common misconceptions`: https://en.wikipedia.org/wiki/List_of_common_misconceptions

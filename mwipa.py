@@ -130,7 +130,8 @@ def main(args):
             outfh.write(u"{0}\t{1}{2}".format(line, transcribed, os.linesep))
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Query merriam-webster.com")
+    parser = argparse.ArgumentParser(description=("Query merriam-webster.com "
+                                                  "for IPA or POS data"))
     parser.add_argument('infile',
                         help='Text file without punctuation to use as input')
     parser.add_argument('outfile',
