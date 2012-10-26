@@ -90,7 +90,8 @@ def get_ipa(word, cache={}):
     translations = []
     for ipa in ipas:
         if ipa.text:
-            translations.extend(ipa.text.split(','))
+            translations.extend([part.strip() for part in ipa.text.split(',')
+                                 if part.strip()])
         for i in list(ipa):
             if i.tail:
                 translations.extend([i.tail.strip(',; ')])
